@@ -1,0 +1,4 @@
+#+TITLE: README
+
+* Flappy Bird
+This project is for expanding my knowledge of C by trying to learn [[https://www.raylib.com/][raylib]].
