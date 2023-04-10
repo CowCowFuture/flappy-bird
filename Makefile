@@ -1,5 +1,5 @@
 CFLAGS=-Wall -lraylib
 INCLUDE=-I .
 
-bird: main.c pipes.h
+bird: main.c pipe.h
 	gcc -o bird ${INCLUDE} ${CFLAGS} main.c
