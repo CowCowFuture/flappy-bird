@@ -23,9 +23,7 @@ int main(void)
   Vector2 playerPosition = {128, 128};
   Vector2 playerVelocity = {0, 0};
 
-  int offset = rand() % 200 - 500;
-  const Rectangle generic_pipe = {50, offset, 100, WINDOW_HEIGHT};
-  struct pipeset pipes = {generic_pipe, (Rectangle){generic_pipe.x, generic_pipe.y + 800, generic_pipe.width, generic_pipe.height}};
+  struct pipeset pipes = {20, rand() % 200 - 500};
 
     while (!WindowShouldClose())
     {
@@ -50,8 +48,7 @@ int main(void)
       DrawCircleV(playerPosition, PLAYER_RADIUS, GRAY);
 
       // Pipes
-      DrawRectangleRec(pipes.top_pipe, GREEN);
-      DrawRectangleRec(pipes.bottom_pipe, BLUE);
+      draw_pipes(pipes);
 
       DrawText(string, 10, 10, 50, GRAY);
       EndDrawing();
