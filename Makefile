@@ -1,4 +1,4 @@
-CFLAGS=-Wall -lraylib
+CFLAGS=-Wall -pedantic -lraylib
 INCLUDE=-I .
 
 bird: main.c pipe.c pipe.h
