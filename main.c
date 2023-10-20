@@ -15,9 +15,9 @@
 #define RANDOM_OFFSET rand() % 200 - 500
 
 #define PIPES 5
+#define PIPE_SPACING 175
 
 #define TERMINAL_VELOCITY 25
-#define GRAVITY 0.5
 
 int main(void)
 {
@@ -27,7 +27,7 @@ int main(void)
   srand(time(NULL));
   
   Vector2 playerPosition = {128, 128};
-  Vector2 playerVelocity = {0, 0};
+  float playerVelocity = 0;
 
   
   char string[26] = "Points: ";
@@ -35,26 +35,26 @@ int main(void)
 
   pipeset pipes[PIPES];
   for (int i = 0; i < PIPES; i++)
-    pipes[i] = (pipeset){WINDOW_WIDTH + i * (PIPE_WIDTH + 175), RANDOM_OFFSET};
+    pipes[i] = (pipeset){WINDOW_WIDTH + i * (PIPE_WIDTH + PIPE_SPACING), RANDOM_OFFSET};
 
   while (!WindowShouldClose())
     {
-      if (IsKeyPressed(KEY_SPACE)) playerVelocity.y = -10.0;
+      if (IsKeyPressed(KEY_SPACE)) playerVelocity = -10.0;
+
+      // Gravity only used once, I don't need it to be a macro(?)
+      playerVelocity += 0.5;
+      if (playerVelocity > TERMINAL_VELOCITY) playerVelocity = TERMINAL_VELOCITY;
       
-      playerVelocity.y += GRAVITY;
-      if (playerVelocity.y > TERMINAL_VELOCITY) playerVelocity.y = TERMINAL_VELOCITY;
-      
-      playerPosition.y += playerVelocity.y;
+      playerPosition.y += playerVelocity;
 
       for (int i = 0; i < PIPES; i++)
 	{
-	  if (pipes[i].rectangle_x > -PIPE_WIDTH)
-	    {
+	  if (pipes[i].rectangle_x > -PIPE_WIDTH) {
 	      pipes[i].rectangle_x -= 5;
 	    }
 	  else {
 	    int lastPipe = (i > 0) ? i - 1 : PIPES - 1;
-	    pipes[i].rectangle_x = pipes[lastPipe].rectangle_x + PIPE_WIDTH + 175;
+	    pipes[i].rectangle_x = pipes[lastPipe].rectangle_x + PIPE_WIDTH + PIPE_SPACING;
 	    pipes[i].offset = RANDOM_OFFSET;
 	  }
 
