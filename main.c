@@ -35,39 +35,37 @@ int main(void)
 
   pipeset pipes[PIPES];
   for (int i = 0; i < PIPES; i++)
-    pipes[i] = (pipeset){WINDOW_WIDTH + i * (PIPE_WIDTH + PIPE_SPACING), RANDOM_OFFSET};
+    pipes[i] = (pipeset){WINDOW_WIDTH + i * (PIPE_WIDTH + PIPE_SPACING), RANDOM_OFFSET, 1};
 
-  while (!WindowShouldClose())
-    {
+  while (!WindowShouldClose()) {
       if (IsKeyPressed(KEY_SPACE)) playerVelocity = -10.0;
 
       // Gravity only used once, I don't need it to be a macro(?)
       playerVelocity += 0.5;
-      if (playerVelocity > TERMINAL_VELOCITY) playerVelocity = TERMINAL_VELOCITY;
+      if (playerVelocity > TERMINAL_VELOCITY)
+	playerVelocity = TERMINAL_VELOCITY;
       
       playerPosition.y += playerVelocity;
 
-      for (int i = 0; i < PIPES; i++)
-	{
+      for (int i = 0; i < PIPES; i++) {
 	  if (pipes[i].rectangle_x > -PIPE_WIDTH) {
 	      pipes[i].rectangle_x -= 5;
-	    }
-	  else {
-	    int lastPipe = (i > 0) ? i - 1 : PIPES - 1;
+	  } else {
+	    int lastPipe = (i + PIPES - 1) % PIPES;
 	    pipes[i].rectangle_x = pipes[lastPipe].rectangle_x + PIPE_WIDTH + PIPE_SPACING;
 	    pipes[i].offset = RANDOM_OFFSET;
+	    pipes[i].scorable = 1;
 	  }
 
-	  if (check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i]))
+	  if (check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i])) {
 	    strcpy(string, "l bozo");
-	  if (playerPosition.x >= pipes[i].rectangle_x &&
-	      playerPosition.x <= pipes[i].rectangle_x + PIPE_WIDTH &&
-	      !check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i]))
-	    {
-	      score++;
-	    }
-	  sprintf(string, "Points: %i", score / 20);
-	  
+	  } else if (pipes[i].rectangle_x <= playerPosition.x &&
+		     playerPosition.x <= pipes[i].rectangle_x + PIPE_WIDTH &&
+		     pipes[i].scorable == 1) {
+	    score++;
+	    pipes[i].scorable = 0;
+	  }
+	  sprintf(string, "Score: %i", score);
 	}
 
       BeginDrawing();
@@ -77,7 +75,8 @@ int main(void)
       // Pipes
       for (int i = 0; i < PIPES; i++)
 	draw_pipes(pipes[i]);
-      
+
+      // Player
       DrawText(string, 10, 10, 50, GRAY);
       EndDrawing();
     }
