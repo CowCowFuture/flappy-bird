@@ -1,3 +1,21 @@
+/*
+ * flappy bird -- flappy bird
+ * Copyright (C) 2024  ccf
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -20,7 +38,7 @@
 Vector2 playerPosition = {128, 128};
 float playerVelocity = 0;
 
-  
+
 char string[26] = "Points: ";
 int score = -1; // Below 0 takes you to the main menu.
 
@@ -34,7 +52,7 @@ void gameplay()
   playerVelocity += 0.5;
   if (playerVelocity > TERMINAL_VELOCITY)
     playerVelocity = TERMINAL_VELOCITY;
-      
+
   playerPosition.y += playerVelocity;
 
   for (int i = 0; i < PIPES; i++) {
