@@ -26,9 +26,7 @@ int check_pipe_collisions(Vector2 position1, float radius, pipeset pipes)
 			   PIPE_WIDTH, PIPE_HEIGHT};
   if (CheckCollisionCircleRec(position1, radius, top_pipe) ||
       CheckCollisionCircleRec(position1, radius, bottom_pipe))
-    {
-      return 1;
-    }
+    return 1;
   return 0;
 }
 

@@ -46,7 +46,8 @@ pipeset pipes[PIPES];
 
 void gameplay()
 {
-  if (IsKeyPressed(KEY_SPACE)) playerVelocity = -10.0;
+  if (IsKeyPressed(KEY_SPACE))
+    playerVelocity = -10.0;
 
   // Gravity only used once, I don't need it to be a macro(?)
   playerVelocity += 0.5;
