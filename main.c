@@ -66,9 +66,7 @@ void gameplay()
     }
 
     if (check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i]) || playerPosition.y > WINDOW_HEIGHT) {
-      if (IsKeyPressed(KEY_SPACE)) {
-	score = -1;
-      }
+      score = -1;
     } else if (pipes[i].rectangle_x <= playerPosition.x &&
 	       playerPosition.x <= pipes[i].rectangle_x + PIPE_WIDTH &&
 	       pipes[i].scorable == 1) {
