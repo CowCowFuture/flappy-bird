@@ -16,16 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
 
 #include <raylib.h>
 
 #include "pipe.h"
 
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH  GetScreenWidth()  /* 1024 */
+#define WINDOW_HEIGHT GetScreenHeight() /* 600 */
 
 #define RANDOM_OFFSET rand() % 200 - 500
 
@@ -41,16 +42,23 @@ float playerVelocity = 0;
 
 char string[26] = "Points: ";
 int score = -1; // Below 0 takes you to the main menu.
-int paused = 0; // 0 for =false= 1 for =true=
+bool paused = false; // 0 for =false= 1 for =true=
 
 pipeset pipes[PIPES];
 
-void gameplay()
+struct sfx {
+  Sound jump;
+  Sound score;
+};
+
+void gameplay(struct sfx sfx)
 {
   // Physics Loop
   if (!paused) {
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyPressed(KEY_SPACE)) {
       playerVelocity = -10.0;
+      PlaySound(sfx.jump);
+    }
 
     playerVelocity += 0.5;
     if (playerVelocity > TERMINAL_VELOCITY)
@@ -74,11 +82,13 @@ void gameplay()
   }
 
   for (int i = 0; i < PIPES; i++) {
-    if (check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i]) || playerPosition.y > WINDOW_HEIGHT) {
-      paused = 1;
+    if (check_pipe_collisions(playerPosition, PLAYER_RADIUS, pipes[i]) ||
+	playerPosition.y > WINDOW_HEIGHT) {
+      paused = true;
     } else if (pipes[i].rectangle_x <= playerPosition.x &&
 	       playerPosition.x <= pipes[i].rectangle_x + PIPE_WIDTH &&
 	       pipes[i].scorable == 1) {
+      PlaySound(sfx.score);
       score++;
       pipes[i].scorable = 0;
     }
@@ -97,9 +107,8 @@ void gameplay()
   DrawText(string, 10, 10, 50, GRAY);
   if (paused) { // Currently the only way to pause is to lose
     DrawText("You've lost!", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 3, 50, GRAY);
-    // Hardcoded number to "center" fix later
     DrawText("Press RET to return to the main menu.",
-	     WINDOW_WIDTH / 2 - 500, WINDOW_HEIGHT / 3 + 100, 50, GRAY);
+	     WINDOW_WIDTH / 2 - 462.5, WINDOW_HEIGHT / 3 + 100, 45, GRAY);
   }
   EndDrawing();
 }
@@ -122,7 +131,7 @@ void main_menu() {
     for (int i = 0; i < PIPES; i++)
 	pipes[i] = (pipeset){WINDOW_WIDTH + i * (PIPE_WIDTH + PIPE_SPACING), RANDOM_OFFSET, 1};
 
-    paused = 0;
+    paused = false;
     score = 0; // Begin Game
   }
 
@@ -136,6 +145,9 @@ void main_menu() {
 int main()
 {
   InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Flappy Bird");
+  InitAudioDevice();
+  Sound fx_jump = LoadSound("assets/jump.wav");
+  Sound fx_score = LoadSound("assets/score.wav");
   SetTargetFPS(60);
   // Randomness
   srand(time(NULL));
@@ -144,9 +156,11 @@ int main()
     if (score < 0)
       main_menu();
     else
-      gameplay();
+      gameplay((struct sfx){ fx_jump, fx_score });
   }
 
+  UnloadSound(fx_jump);
+  UnloadSound(fx_score);
   CloseWindow();
   return 0;
 }
